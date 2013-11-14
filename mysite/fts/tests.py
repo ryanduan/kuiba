@@ -1,7 +1,9 @@
-from django.test import LiveServerTestCase
+from django.test import LiveServerTestCase, TestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from datetime import datetime as dt
+from polls.models import Poll, Choice
+from django.utils import timezone
 
 class PollsTest(LiveServerTestCase):
     fixtures = ['admin_user.json']
@@ -53,11 +55,11 @@ class PollsTest(LiveServerTestCase):
         # She sees some input fields for "Question" and "Date published"
         body = self.browser.find_element_by_tag_name('body')
         self.assertIn('Question:', body.text)
-        self.assertIn('Pub date:', body.text)  # This need change
+        self.assertIn('Date published:', body.text)  # This need change
 
         # She types in an interesting question for the Poll
         question_field = self.browser.find_element_by_name('question')
-        question_field.send_keys("How awesome is Test-Driven Development?")
+        question_field.send_keys("What wrong with you?")
 
         # She sets the date and time of publication - it'll be a new year's
         # poll!
@@ -69,11 +71,66 @@ class PollsTest(LiveServerTestCase):
         time_field = self.browser.find_element_by_name('pub_date_1')
         time_field.send_keys(pub_time)
 
+        # She sees she can enter choices for the Poll.  She adds three
+        choice_1 = self.browser.find_element_by_name('choice_set-0-choice_text')  # Need change
+        choice_1.send_keys('Very awesome')
+        choice_2 = self.browser.find_element_by_name('choice_set-1-choice_text')  # Need change
+        choice_2.send_keys('Quite awesome')
+        choice_3 = self.browser.find_element_by_name('choice_set-2-choice_text')  # Need change
+        choice_3.send_keys('Moderately awesome')
+
+        # Gertrude clicks the save button
+        save_button = self.browser.find_element_by_css_selector("input[value='Save']")
+        save_button.click()
         # She is returned to the "Polls" listing, where she can see her
         # new poll, listed as a clickable link
-        #new_poll_links = self.browser.find_elements_by_link_text(
-        #        "How awesome is Test-Driven Development?"
-        #)
-        #self.assertEquals(len(new_poll_links), 1)
+        new_poll_links = self.browser.find_elements_by_link_text(
+                "What wrong with you?"
+        )
+        self.assertEquals(len(new_poll_links), 1)
 
         # Satisfied, she goes back to sleep
+    def test_verbose_name_for_pub_date(self):
+        for field in Poll._meta.fields:
+            if field.name == 'pub_date':
+                self.assertEquals(field.verbose_name, 'Date published')
+
+    def test_poll_objects_are_named_after_their_question(self):
+        p = Poll()
+        p.question = 'How is babby formed?'
+        self.assertEquals(str(p), 'How is babby formed?')
+
+class ChoiceModelTest(TestCase):
+
+    def test_creating_some_choices_for_a_poll(self):
+        # start by creating a new Poll object
+        poll = Poll()
+        poll.question="What's up?"
+        poll.pub_date = timezone.now()
+        poll.save()
+
+        # now create a Choice object
+        choice = Choice()
+
+        # link it with our Poll
+        choice.poll = poll
+
+        # give it some text
+        choice.choice_text = "doin' fine..."  # Need change
+
+        # and let's say it's had some votes
+        choice.votes = 3
+
+        # save it
+        choice.save()
+
+        # try retrieving it from the database, using the poll object's reverse
+        # lookup
+        poll_choices = poll.choice_set.all()
+        self.assertEquals(poll_choices.count(), 1)
+
+        # finally, check its attributes have been saved
+        choice_from_db = poll_choices[0]
+        self.assertEquals(choice_from_db, choice)
+        self.assertEquals(choice_from_db.choice_text, "doin' fine...")  # Need change
+        self.assertEquals(choice_from_db.votes, 3)

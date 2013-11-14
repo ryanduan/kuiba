@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.utils import timezone
-from polls.models import Poll
+from polls.models import Poll, Choice
 
 class PollModelTest(TestCase):
     def test_creating_a_new_poll_and_saving_it_to_the_database(self):
@@ -21,3 +21,7 @@ class PollModelTest(TestCase):
         # and check that it's saved its two attributes: question and pub_date
         self.assertEquals(only_poll_in_database.question, "What's up?")
         self.assertEquals(only_poll_in_database.pub_date, poll.pub_date)
+
+    def test_choice_defaults(self):
+        choice = Choice()
+        self.assertEquals(choice.votes, 0)

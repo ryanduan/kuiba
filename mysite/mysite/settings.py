@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'fts',
     'polls',
+    'south',
 )
 
 # A sample logging configuration. The only tangible logging
