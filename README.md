@@ -10,5 +10,5 @@
 [Django 1.5.2](https://www.djangoproject.com/)
 
 Visit WIKI to deploy:
-====
+==
 [Deploy the development environment](https://github.com/ryanduan/kuiba/blob/master/WIKI.md)

@@ -1,6 +1,7 @@
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from datetime import datetime as dt
 
 class PollsTest(LiveServerTestCase):
     fixtures = ['admin_user.json']
@@ -37,5 +38,42 @@ class PollsTest(LiveServerTestCase):
         polls_links = self.browser.find_elements_by_link_text('Polls')
         self.assertEquals(len(polls_links), 2)
 
-        # TODO: Gertrude uses the admin site to create a new Poll
-        self.fail('todo: finish tests')
+        # The second one looks more exciting, so she clicks it
+        polls_links[1].click()
+
+        # She is taken to the polls listing page, which shows she has
+        # no polls yet
+        body = self.browser.find_element_by_tag_name('body')
+        self.assertIn('0 polls', body.text)
+
+        # She sees a link to 'add' a new poll, so she clicks it
+        new_poll_link = self.browser.find_element_by_link_text('Add poll')
+        new_poll_link.click()
+
+        # She sees some input fields for "Question" and "Date published"
+        body = self.browser.find_element_by_tag_name('body')
+        self.assertIn('Question:', body.text)
+        self.assertIn('Pub date:', body.text)  # This need change
+
+        # She types in an interesting question for the Poll
+        question_field = self.browser.find_element_by_name('question')
+        question_field.send_keys("How awesome is Test-Driven Development?")
+
+        # She sets the date and time of publication - it'll be a new year's
+        # poll!
+        dtn = dt.now()
+        pub_date = '%s-%s-%s' % (dtn.date().year, dtn.date().month, dtn.date().day)
+        pub_time = '%s:%s:%s' % (dtn.time().hour, dtn.time().minute, dtn.time().second)
+        date_field = self.browser.find_element_by_name('pub_date_0')
+        date_field.send_keys(pub_date)
+        time_field = self.browser.find_element_by_name('pub_date_1')
+        time_field.send_keys(pub_time)
+
+        # She is returned to the "Polls" listing, where she can see her
+        # new poll, listed as a clickable link
+        #new_poll_links = self.browser.find_elements_by_link_text(
+        #        "How awesome is Test-Driven Development?"
+        #)
+        #self.assertEquals(len(new_poll_links), 1)
+
+        # Satisfied, she goes back to sleep
