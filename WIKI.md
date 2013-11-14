@@ -240,7 +240,7 @@ Then, let's run it again and again
     FAILED (failures=1)
     Destroying test database for alias 'default'...
 
-I think you can login. OK, let's commit our code now.
+I think you can login. OK, let's commit and our code push to github now.
 
     git status (to see which files have changed)
     git diff (review the detail)
@@ -249,3 +249,82 @@ I think you can login. OK, let's commit our code now.
     git checkout master
     git merge develop
     git push (default push origin branch to github)
+
+You can use my .gitconfig
+
+    git st (to see which files have changed)
+    git df (review the detail)
+    git add -A (add all of the files)
+    git ci -m 'Part 1 running test can login'
+    git co master
+    git mg develop
+    git ph (default push origin branch to github)
+
+Add app polls
+
+    $ python manage.py startapp polls
+
+Edit mysite/settings.py add polls
+
+Edit polls/models.py like:
+
+    from django.db import models
+
+    class Poll(models.Model):
+        question = models.CharField(max_length=200)
+        pub_date = models.DateTimeField('date published')
+
+        def __str__(self):
+            return self.question
+
+    class Choice(models.Model):
+        poll = models.ForeignKey(Poll)
+        choice_text = models.CharField(max_length=200)
+        votes = models.IntegerField(default=0)
+
+        def __str__(self):
+            return self.choice_text
+
+Edit polls/admin.py like:
+
+    from django.contrib import admin
+    from polls.models import Poll
+
+    admin.site.register(Poll)
+
+Edit polls/tests.py like:
+
+    from django.test import TestCase
+    from django.utils import timezone
+    from polls.models import Poll
+
+    class PollModelTest(TestCase):
+        def test_creating_a_new_poll_and_saving_it_to_the_database(self):
+            # start by creating a new Poll object with its "question" set
+            poll = Poll()
+            poll.question = "What's up?"
+            poll.pub_date = timezone.now()
+
+            # check we can save it to the database
+            poll.save()
+
+            # now check we can find it in the database again
+            all_polls_in_database = Poll.objects.all()
+            self.assertEquals(len(all_polls_in_database), 1)
+            only_poll_in_database = all_polls_in_database[0]
+            self.assertEquals(only_poll_in_database, poll)
+
+            # and check that it's saved its two attributes: question and pub_date
+            self.assertEquals(only_poll_in_database.question, "What's up?")
+            self.assertEquals(only_poll_in_database.pub_date, poll.pub_date)
+
+And then, running tests
+
+    $ python manage.py test polls
+    Creating test database for alias 'default'...
+    .
+    ----------------------------------------------------------------------
+    Ran 1 test in 0.001s
+
+    OK
+    Destroying test database for alias 'default'...
