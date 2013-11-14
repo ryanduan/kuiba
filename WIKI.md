@@ -34,6 +34,12 @@ Use git-flow
     mkdir kuiba
     git flow init
 
+You can create a new repo on you github name kuiba, then add remote to you local
+
+    git remote add origin git@github.com:ryanduan/kuiba.git
+
+I use ssh.
+
 You can visit [gitflow](https://github.com/nvie/gitflow) to know git-flow
 
 And then, use travis-ci
@@ -234,4 +240,12 @@ Then, let's run it again and again
     FAILED (failures=1)
     Destroying test database for alias 'default'...
 
-I think you can login.
+I think you can login. OK, let's commit our code now.
+
+    git status (to see which files have changed)
+    git diff (review the detail)
+    git add -A (add all of the files)
+    git commit -m 'Part 1 running test can login'
+    git checkout master
+    git merge develop
+    git push (default push origin branch to github)
