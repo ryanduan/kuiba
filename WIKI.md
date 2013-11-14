@@ -328,3 +328,11 @@ And then, running tests
 
     OK
     Destroying test database for alias 'default'...
+
+OK, part 1 finished now.
+
+    git st
+    git add -A
+    git ci -m 'Part 1 finished'
+    git ph
+
