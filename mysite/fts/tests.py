@@ -154,22 +154,23 @@ class PollsTest(LiveServerTestCase):
 
         # She logs out of the admin site
         self.browser.find_element_by_link_text('Log out').click()
-    def test_voting_on_a_new_poll(self):
+#    def test_voting_on_a_new_poll(self):
         # First, Gertrude the administrator logs into the admin site and
         # creates a couple of new Polls, and their response choices
-        self._setup_polls_via_admin()
+#        self._setup_polls_via_admin()
 
         #self.fail('TODO')
         # Now, Herbert the regular user goes to the homepage of the site. He
         # sees a list of polls.
-        self.browser.get(self.live_server_url + '/admin/')
-        username_field = self.browser.find_element_by_name('username')
-        username_field.send_keys('ryan')
-        password_field = self.browser.find_element_by_name('password')
-        password_field.send_keys('123qwe')
-        password_field.send_keys(Keys.RETURN)
-        heading = self.browser.find_element_by_tag_name('h1')
-        self.assertEquals(heading.text, 'Django administration')
+#        self.browser.get(self.live_server_url)
+#        username_field = self.browser.find_element_by_name('username')
+#        username_field.send_keys('ryan')
+#        password_field = self.browser.find_element_by_name('password')
+#        password_field.send_keys('123qwe')
+#        password_field.send_keys(Keys.RETURN)
+
+#        heading = self.browser.find_element_by_tag_name('h1')
+#        self.assertEquals(heading.text, 'Not Found')
 
         # He clicks on the link to the first Poll, which is called
         # 'How awesome is test-driven development?'
@@ -178,12 +179,12 @@ class PollsTest(LiveServerTestCase):
 #                "How are you?"
 #        )
 #        first_poll_links[0].click()
-        first_poll_title = POLL1.question
-        self.browser.find_element_by_link_text(first_poll_title).click()
+#        first_poll_title = POLL1.question
+#        self.browser.find_element_by_link_text(first_poll_title).click()
 
         # He is taken to a poll 'results' page, which says
         # "no-one has voted on this poll yet"
-        body = self.browser.find_element_by_tag_name('body')
+#        body = self.browser.find_element_by_tag_name('body')
 #        self.assertIn("no-one has voted on this poll yet", body.text)
 
 #        self.fail('TODO')
@@ -253,3 +254,17 @@ class PollsTest(LiveServerTestCase):
 #        self.assertEquals(choice_from_db, choice)
 #        self.assertEquals(choice_from_db.choice_text, "doin' fine...")  # Need change
 #        self.assertEquals(choice_from_db.votes, 3)
+
+class HomePageViewTest(TestCase):
+
+    def test_root_url_shows_all_polls(self):
+        # set up some polls
+        poll1 = Poll(question='6 times 7', pub_date=timezone.now())
+        poll1.save()
+        poll2 = Poll(question='life, the universe and everything', pub_date=timezone.now())
+        poll2.save()
+
+        response = self.client.get('/')
+
+        self.assertIn(poll1.question, response.content)
+        self.assertIn(poll2.question, response.content)
