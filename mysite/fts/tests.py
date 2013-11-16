@@ -154,10 +154,10 @@ class PollsTest(LiveServerTestCase):
 
         # She logs out of the admin site
         self.browser.find_element_by_link_text('Log out').click()
-#    def test_voting_on_a_new_poll(self):
+    def test_voting_on_a_new_poll(self):
         # First, Gertrude the administrator logs into the admin site and
         # creates a couple of new Polls, and their response choices
-#        self._setup_polls_via_admin()
+        self._setup_polls_via_admin()
 
         #self.fail('TODO')
         # Now, Herbert the regular user goes to the homepage of the site. He
@@ -254,17 +254,3 @@ class PollsTest(LiveServerTestCase):
 #        self.assertEquals(choice_from_db, choice)
 #        self.assertEquals(choice_from_db.choice_text, "doin' fine...")  # Need change
 #        self.assertEquals(choice_from_db.votes, 3)
-
-class HomePageViewTest(TestCase):
-
-    def test_root_url_shows_all_polls(self):
-        # set up some polls
-        poll1 = Poll(question='6 times 7', pub_date=timezone.now())
-        poll1.save()
-        poll2 = Poll(question='life, the universe and everything', pub_date=timezone.now())
-        poll2.save()
-
-        response = self.client.get('/')
-
-        self.assertIn(poll1.question, response.content)
-        self.assertIn(poll2.question, response.content)
