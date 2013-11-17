@@ -159,46 +159,38 @@ class PollsTest(LiveServerTestCase):
         # creates a couple of new Polls, and their response choices
         self._setup_polls_via_admin()
 
-        #self.fail('TODO')
         # Now, Herbert the regular user goes to the homepage of the site. He
         # sees a list of polls.
-#        self.browser.get(self.live_server_url)
+        self.browser.get(self.live_server_url)
 #        username_field = self.browser.find_element_by_name('username')
 #        username_field.send_keys('ryan')
 #        password_field = self.browser.find_element_by_name('password')
 #        password_field.send_keys('123qwe')
 #        password_field.send_keys(Keys.RETURN)
 
-#        heading = self.browser.find_element_by_tag_name('h1')
-#        self.assertEquals(heading.text, 'Not Found')
+        heading = self.browser.find_element_by_tag_name('h1')
+        self.assertEquals(heading.text, 'Polls')
 
         # He clicks on the link to the first Poll, which is called
         # 'How awesome is test-driven development?'
         # 'How are you?'
-#        first_poll_links = self.browser.find_elements_by_link_text(
-#                "How are you?"
-#        )
-#        first_poll_links[0].click()
-#        first_poll_title = POLL1.question
-#        self.browser.find_element_by_link_text(first_poll_title).click()
+        first_poll_title = POLL1.question
+        self.browser.find_element_by_link_text(first_poll_title).click()
 
         # He is taken to a poll 'results' page, which says
         # "no-one has voted on this poll yet"
-#        body = self.browser.find_element_by_tag_name('body')
-#        self.assertIn("no-one has voted on this poll yet", body.text)
+        main_heading = self.browser.find_element_by_tag_name('h1')
+        self.assertEquals(main_heading.text, 'Poll Results')
+        sub_heading = self.browser.find_element_by_tag_name('h2')
+        self.assertEquals(sub_heading.text, first_poll_title)
+        body = self.browser.find_element_by_tag_name('body')
+        self.assertIn('No-one has voted on this poll yet', body.text)
 
-#        self.fail('TODO')
+        self.fail('TODO')
+
 
         # He also sees a form, which offers him several choices.
         # He decided to select "very awesome"
-#        select_choice_links = self.browser.find_elements_by_css_selector(
-                #'input[type="checkbox"]'
-#                'inline-related dynamic-choice_set'
-#            )
-        #for choice_link in select_choice_links:
-        #    if self.assertEquals(choice_link, )
-#        self.assertEquals(len(select_choice_links), 3)
-                #print "OK"
 
         # He clicks 'submit'
 

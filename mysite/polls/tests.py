@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.utils import timezone
 from polls.models import Poll, Choice
+from django.core.urlresolvers import reverse
 
 class PollModelTest(TestCase):
     def test_creating_a_new_poll_and_saving_it_to_the_database(self):
@@ -37,5 +38,15 @@ class HomePageViewTest(TestCase):
 
         response = self.client.get('/')
 
+        self.assertTemplateUsed(response, 'home.html')
+
+        polls_in_context = response.context['polls']
+        self.assertEquals(list(polls_in_context), [poll1, poll2])
+
         self.assertIn(poll1.question, response.content)
         self.assertIn(poll2.question, response.content)
+
+        poll1_url = reverse('polls.views.poll', args=[poll1.id,])
+        self.assertIn(poll1_url, response.content)
+        poll2_url = reverse('polls.views.poll', args=[poll2.id, ])
+        self.assertIn(poll2_url, response.content)
