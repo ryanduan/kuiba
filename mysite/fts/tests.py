@@ -10,10 +10,10 @@ PollInfo = namedtuple('PollInfo', ['question', 'choices'])
 POLL1 = PollInfo(
     question="How are you?",
     choices=[
-        'Fine',
         'Good',
-        'OK',
-    ]
+        'Fine',
+        'Bad',
+    ],
 )
 POLL2 = PollInfo(
     question="Which development language do you like?",
@@ -189,7 +189,12 @@ class PollsTest(LiveServerTestCase):
 
         choice_labels = self.browser.find_elements_by_tag_name('label')
         choices_text = [c.text for c in choice_labels]
-        self.assertEquals(choices_text,['Fine', 'Good', 'OK'])
+        self.assertEquals(choices_text,[
+                'Vote:',
+                'Good',
+                'Fine',
+                'Bad',
+            ])
 
         # He decided to select "very awesome"
         chosen = self.browser.find_element_by_css_selector(
@@ -200,7 +205,7 @@ class PollsTest(LiveServerTestCase):
         # He clicks 'submit'
         self.browser.find_element_by_css_selector(
             "input[value='1']"
-            ).ckick()
+            ).click()
 
 
         # The page refreshes, and he sees that his choice
