@@ -12,7 +12,7 @@ POLL1 = PollInfo(
     choices=[
         'Fine',
         'Good',
-        'I am OK',
+        'OK',
     ]
 )
 POLL2 = PollInfo(
@@ -91,11 +91,11 @@ class PollsTest(LiveServerTestCase):
 #        time_field.send_keys(pub_time)
 #
 #        # She sees she can enter choices for the Poll.  She adds three
-#        choice_1 = self.browser.find_element_by_name('choice_set-0-choice_text')  # Need change
+#        choice_1 = self.browser.find_element_by_name('choice_set-0-choice')
 #        choice_1.send_keys('Very awesome')
-#        choice_2 = self.browser.find_element_by_name('choice_set-1-choice_text')  # Need change
+#        choice_2 = self.browser.find_element_by_name('choice_set-1-choice')
 #        choice_2.send_keys('Quite awesome')
-#        choice_3 = self.browser.find_element_by_name('choice_set-2-choice_text')  # Need change
+#        choice_3 = self.browser.find_element_by_name('choice_set-2-choice')
 #        choice_3.send_keys('Moderately awesome')
 #
 #        # Gertrude clicks the save button
@@ -134,9 +134,9 @@ class PollsTest(LiveServerTestCase):
 
             # Sees she can enter choices for the Poll on this same page,
             # so she does
-            for i, choice_text in enumerate(poll_info.choices):
-                choice_field = self.browser.find_element_by_name('choice_set-%d-choice_text' % i)
-                choice_field.send_keys(choice_text)
+            for i, choice in enumerate(poll_info.choices):
+                choice_field = self.browser.find_element_by_name('choice_set-%d-choice' % i)
+                choice_field.send_keys(choice)
 
             # Saves her new poll
             save_button = self.browser.find_element_by_css_selector("input[value='Save']")
@@ -162,11 +162,6 @@ class PollsTest(LiveServerTestCase):
         # Now, Herbert the regular user goes to the homepage of the site. He
         # sees a list of polls.
         self.browser.get(self.live_server_url)
-#        username_field = self.browser.find_element_by_name('username')
-#        username_field.send_keys('ryan')
-#        password_field = self.browser.find_element_by_name('password')
-#        password_field.send_keys('123qwe')
-#        password_field.send_keys(Keys.RETURN)
 
         heading = self.browser.find_element_by_tag_name('h1')
         self.assertEquals(heading.text, 'Polls')
@@ -186,18 +181,32 @@ class PollsTest(LiveServerTestCase):
         body = self.browser.find_element_by_tag_name('body')
         self.assertIn('No-one has voted on this poll yet', body.text)
 
-        self.fail('TODO')
-
-
         # He also sees a form, which offers him several choices.
+        choice_inputs = self.browser.find_elements_by_css_selector(
+                "input[type='radio']"
+            )
+        self.assertEquals(len(choice_inputs), 3)
+
+        choice_labels = self.browser.find_elements_by_tag_name('label')
+        choices_text = [c.text for c in choice_labels]
+        self.assertEquals(choices_text,['Fine', 'Good', 'OK'])
+
         # He decided to select "very awesome"
+        chosen = self.browser.find_element_by_css_selector(
+                "input[value='1']"
+            )
+        chosen.click()
 
         # He clicks 'submit'
+        self.browser.find_element_by_css_selector(
+            "input[value='1']"
+            ).ckick()
+
 
         # The page refreshes, and he sees that his choice
         # has updated the results.  they now say
         # "100 %: very awesome".
-
+        self.fail("TODO")
         # The page also says "1 votes"
 
         # Satisfied, he goes back to sleep
@@ -228,7 +237,7 @@ class PollsTest(LiveServerTestCase):
 #        choice.poll = poll
 #
 #        # give it some text
-#        choice.choice_text = "doin' fine..."  # Need change
+#        choice.choice = "doin' fine..."  # Need change
 #
 #        # and let's say it's had some votes
 #        choice.votes = 3
@@ -244,5 +253,5 @@ class PollsTest(LiveServerTestCase):
 #        # finally, check its attributes have been saved
 #        choice_from_db = poll_choices[0]
 #        self.assertEquals(choice_from_db, choice)
-#        self.assertEquals(choice_from_db.choice_text, "doin' fine...")  # Need change
+#        self.assertEquals(choice_from_db.choice, "doin' fine...")  # Need change
 #        self.assertEquals(choice_from_db.votes, 3)
