@@ -7,7 +7,7 @@ from polls.forms import PollVoteForm
 
 class PollModelTest(TestCase):
     def test_creating_a_new_poll_and_saving_it_to_the_database(self):
-        self.fail("Here_is_test_models")
+        #self.fail("Here_is_test_models")
         # start by creating a new Poll object with its "question" set
         poll = Poll()
         poll.question = "What's up?"
